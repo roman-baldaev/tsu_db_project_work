@@ -58,16 +58,47 @@ END $$;
 ---------------------------------------------------------------------------------------------------------------
 CREATE TABLE russian_names (
 	 id INT NOT NULL,
-	 Name VARCHAR(100) NOT NULL,
-	 Sex VARCHAR(1) NULL,
-	 PeoplesCount INT NULL,
-	 WhenPeoplesCount TIMESTAMP NULL,
+	 name VARCHAR(100) NOT NULL,
+	 sex VARCHAR(1) NULL,
+	 peoplesCount INT NULL,
+	 whenpeoplescount TIMESTAMP NULL
 );
 
 CREATE TABLE russian_surnames (
 	 id INT NOT NULL,
-	 Surname VARCHAR(100) NOT NULL,
-	 Sex VARCHAR(1) NULL,
-	 PeoplesCount INT NULL,
-	 WhenPeoplesCount TIMESTAMP NULL,
+	 surname VARCHAR(100) NOT NULL,
+	 sex VARCHAR(1) NULL,
+	 peoplesCount INT NULL,
+	 whenpeoplescount TIMESTAMP NULL
 );
+
+select * from russian_names;
+select * from russian_surnames;
+-----------------------------------------------------------------------------------------------------------
+
+-- Поликлиники (засовывает нули в hospital_id пока что)
+DO $$
+DECLARE
+	smth varchar(100);
+	hosp_id integer;
+	my_name text;
+	my_adress text; 
+	my_phone text;
+BEGIN
+	FOR i IN 1 .. 6
+	LOOP
+		SELECT id INTO hosp_id
+		FROM hospitals WHERE random() > 0.8;
+		SELECT CONCAT('Поликлиника №', CAST(ROUND(random()*14+1) AS text)) INTO my_name;
+		SELECT CONCAT(adress, ', ', ROUND(random()*(111-1)+1)) INTO my_adress
+		FROM help WHERE random() > 0.92 LIMIT 1;
+		SELECT CONCAT('+73822', CAST(FLOOR(random()*(1000000-100000)+100000) AS text)) INTO my_phone;
+		INSERT INTO polyclinics (hospital_id, name, address, phone)
+		VALUES(hosp_id, my_name, my_adress, my_phone);
+	END LOOP;
+END $$;
+
+SELECT * from polyclinics;
+delete from polyclinics;
+
+SELECT * from hospitals;
