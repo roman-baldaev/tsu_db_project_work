@@ -1,0 +1,3 @@
+DROP TRIGGER TR_check_access_to_in_operation ON in_operations_doctors;
+DROP TRIGGER TR_check_access_to_out_operation ON out_operations_doctors;
+DROP TRIGGER TR_check_access_to_operation_stats ON operations_stats;
