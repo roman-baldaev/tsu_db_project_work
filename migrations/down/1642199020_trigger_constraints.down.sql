@@ -3,3 +3,6 @@ DROP TRIGGER TR_check_access_to_out_operation ON out_operations_doctors;
 DROP TRIGGER TR_check_access_to_operation_stats ON operations_stats;
 DROP TRIGGER TR_check_non_default_contract_conditions_in_clinics ON doctors_clinics;
 DROP TRIGGER TR_check_non_default_contract_conditions_in_hospitals ON doctors_hospitals;
+DROP TRIGGER TR_check_correct_degree_for_title ON doctors;
+DROP TRIGGER TR_check_admissibility_of_combining_jobs_in_clinic ON doctors_clinics;
+DROP TRIGGER TR_check_admissibility_of_combining_jobs_in_hospital ON doctors_hospitals;
