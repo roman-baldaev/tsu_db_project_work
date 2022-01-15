@@ -18,7 +18,20 @@ CREATE TABLE help
  
 );
 
-CREATE TABLE russian_names ( 
+CREATE TABLE dates_table -- Вспомогательная таблица с датами
+(  dates_and_times TIMESTAMP WITHOUT TIME ZONE NOT NULL
+ , dates DATE NOT NULL
+ , times TIME WITHOUT TIME ZONE NOT NULL
+);
+
+CREATE TABLE russian_patronymics (
+   id serial PRIMARY KEY
+ , patronymic text NOT NULL
+ , sex VARCHAR(1) NOT NULL
+);
+
+
+CREATE TABLE russian_names ( -- Эти две таблицы пусть будут такими странными, целое дело их перестраивать
 	 id INT NOT NULL,
 	 name VARCHAR(100) NOT NULL,
 	 sex VARCHAR(1) NULL,
