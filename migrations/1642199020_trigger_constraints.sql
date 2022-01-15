@@ -289,3 +289,110 @@ DELETE FROM doctors WHERE id >= 1000;
 
 
 ------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------
+/*
+    5.  "Разрешено совместительство, так что каждый врач может работать либо в больнице, либо в поликлинике, либо и в одной больнице и в одной поликлинике.
+            Врачи со званием доцента или профессора могут консультировать в нескольких больницах или поликлиниках."
+    Проверяем при добавлении записей в таблицы `doctors_hospitals` и `doctors_clinics`
+*/
+CREATE OR REPLACE FUNCTION F_check_admissibility_of_combining_jobs_in_clinic()
+RETURNS TRIGGER AS $$
+    DECLARE
+        _title doctor_titles;
+        _clinic_id INTEGER;
+BEGIN
+    SELECT title INTO _title
+    FROM doctors WHERE id=new.doctor_id;
+    IF _title IS NULL THEN
+        RAISE EXCEPTION no_data_found
+            USING MESSAGE = 'non existing doctor';
+    END IF;
+    -- в ином случае нам проверять не нужно
+    IF _title != 'docent' AND _title != 'professor' THEN
+        SELECT clinic_id INTO _clinic_id
+        FROM doctors_clinics WHERE doctor_id = new.doctor_id;
+        IF _clinic_id IS NOT NULL THEN
+            RAISE EXCEPTION 'doctor has no title and already working in the clinic %', _clinic_id;
+        END IF;
+    END IF;
+    RETURN new;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION F_check_admissibility_of_combining_jobs_in_hospital()
+RETURNS TRIGGER AS $$
+    DECLARE
+        _title doctor_titles;
+        _hospital_id INTEGER;
+BEGIN
+    SELECT title INTO _title
+    FROM doctors WHERE id=new.doctor_id;
+    IF _title IS NULL THEN
+        RAISE EXCEPTION no_data_found
+            USING MESSAGE = 'non existing doctor';
+    END IF;
+    -- в ином случае нам проверять не нужно
+    IF _title != 'docent' AND _title != 'professor' THEN
+        SELECT hospital_id INTO _hospital_id
+        FROM doctors_hospitals WHERE doctor_id = new.doctor_id;
+        IF _hospital_id IS NOT NULL THEN
+            RAISE EXCEPTION 'doctor has no title and already working in the hospital %', _hospital_id;
+        END IF;
+    END IF;
+    RETURN new;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER TR_check_admissibility_of_combining_jobs_in_clinic
+BEFORE INSERT ON doctors_clinics
+FOR EACH ROW
+EXECUTE PROCEDURE F_check_admissibility_of_combining_jobs_in_clinic();
+
+CREATE TRIGGER TR_check_admissibility_of_combining_jobs_in_hospital
+BEFORE INSERT ON doctors_hospitals
+FOR EACH ROW
+EXECUTE PROCEDURE F_check_admissibility_of_combining_jobs_in_hospital();
+
+/*
+    Проверка триггера
+*/
+-- две больницы
+INSERT INTO hospitals(id, name, address, phone)
+VALUES (1000, 'Первая городская больница', 'ул. Тестировочная', '555-222');
+
+INSERT INTO hospitals(id, name, address, phone)
+VALUES (1001, 'Вторая городская больница', 'ул. Тестировочная', '222-222');
+
+-- создадим должность
+INSERT INTO doctor_posts(id, name) VALUES (1000, 'Врач');
+
+-- создадим врача без звания
+INSERT INTO doctors(id, name, last_name, patronymic, degree, title, spec_id)
+VALUES (1000, 'Это', 'Для', 'Тестирования', 'candidate', 'none', 1);
+
+-- доцент
+INSERT INTO doctors(id, name, last_name, patronymic, degree, title, spec_id)
+VALUES (1001, 'Это', 'Для', 'Тестирования', 'candidate', 'docent', 1);
+
+-- добавили доктора 1000 в первую больницу
+INSERT INTO doctors_hospitals(id, doctor_id, hospital_id, post_id, "from", salary)
+VALUES (1000, 1000, 1000, 1000, CURRENT_DATE, 100000);
+
+-- Ошибка - во вторую добавить не можем
+INSERT INTO doctors_hospitals(id, doctor_id, hospital_id, post_id, "from", salary)
+VALUES (1001, 1000, 1001, 1000, CURRENT_DATE, 100000);
+
+-- доцента можем добавить в разные больницы
+INSERT INTO doctors_hospitals(id, doctor_id, hospital_id, post_id, "from", salary)
+VALUES (1002, 1001, 1000, 1000, CURRENT_DATE, 100000);
+
+INSERT INTO doctors_hospitals(id, doctor_id, hospital_id, post_id, "from", salary)
+VALUES (1003, 1001, 1001, 1000, CURRENT_DATE, 100000);
+
+SELECT * FROM doctors_hospitals;
+
+DELETE FROM doctors_hospitals WHERE id >= 1000;
+DELETE FROM hospitals WHERE id >= 1000;
+DELETE FROM doctor_posts WHERE id >= 1000;
+DELETE FROM doctors WHERE id >= 1000;
+------------------------------------------------------------------------------------------------
