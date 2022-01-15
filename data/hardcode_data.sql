@@ -56,6 +56,12 @@ VALUES(7, 'Психиатр', false, false, true);
 INSERT INTO specializations (id, name, can_operate, additional_payment, long_vacation)
 VALUES(8, 'Психолог', false, false, true);
 
+INSERT INTO specializations (id, name, can_operate, additional_payment, long_vacation)
+VALUES(9, 'Рентгенолог', false, true, true);
+
+INSERT INTO specializations (id, name, can_operate, additional_payment, long_vacation)
+VALUES(10, 'Стоматолог', true, true, false);
+
 -- doctor_posts -- тут сложно чето хелп
 --------------------------------------------------------------------------------
 INSERT INTO doctor_posts (name)
