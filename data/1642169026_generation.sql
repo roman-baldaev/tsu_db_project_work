@@ -84,7 +84,6 @@ SELECT * from hospitals;
 
 -------------------------------------------------------------------------------------------------------------
 -- doctors
--- нет поля алма матер и нет разбиения по полу (винегрет)
 DO $$
 DECLARE
 	my_name text;
@@ -96,17 +95,34 @@ DECLARE
 	my_birth_date date;
 	my_works_since date;
 	my_alma_mater text;
+	my_gender text;
 BEGIN
 	FOR i IN 1 .. 6
 	LOOP
-		SELECT name INTO my_name
-		FROM russian_names WHERE random() > 0.9999 LIMIT 1;
+		SELECT sex INTO my_gender
+		FROM russian_names WHERE random() > 0.99991 LIMIT 1;
+	
+		IF my_gender LIKE 'Ж' THEN
+			SELECT name INTO my_name
+			FROM russian_names WHERE random() > 0.999 AND sex LIKE 'Ж' LIMIT 1;
+			
+			SELECT surname INTO my_last_name
+			FROM russian_surnames WHERE random() > 0.9999 LIMIT 1;
+			
+			SELECT patronymic INTO my_patronymic
+			FROM russian_patronymics WHERE random() > 0.8 AND sex LIKE 'Ж' LIMIT 1;
+		END IF;
 		
-		SELECT surname INTO my_last_name
-		FROM russian_surnames WHERE random() > 0.9999 LIMIT 1;
-		
-		SELECT patronymic INTO my_patronymic
-		FROM russian_patronymics WHERE random() > 0.8 LIMIT 1;
+		IF my_gender LIKE 'М' THEN
+			SELECT name INTO my_name
+			FROM russian_names WHERE random() > 0.999 AND sex LIKE 'М' LIMIT 1;
+			
+			SELECT surname INTO my_last_name
+			FROM russian_surnames WHERE random() > 0.9999 LIMIT 1;
+			
+			SELECT patronymic INTO my_patronymic
+			FROM russian_patronymics WHERE random() > 0.8 AND sex LIKE 'М' LIMIT 1;
+		END IF;
 		
 		SELECT id INTO my_spec_id
 		FROM specializations WHERE random() > 0.7 LIMIT 1;
@@ -118,7 +134,7 @@ BEGIN
 		FROM dates_table WHERE random() > 0.9 AND EXTRACT(YEAR FROM dates) > '2000';
 		
 		INSERT INTO doctors (name, last_name, patronymic, degree, title, spec_id, birth_date, works_since, alma_mater)
-		VALUES(my_name, my_last_name, my_patronymic, 'doctor', 'professor', my_spec_id, my_birth_date, my_works_since, 'че');
+		VALUES(my_name, my_last_name, my_patronymic, 'doctor', 'professor', my_spec_id, my_birth_date, my_works_since, ' ');
 	END LOOP;
 END $$;
 
@@ -285,3 +301,70 @@ END $$;
 
 select * from wards;
 delete from wards;
+
+---------------------------------------------------------------------------------------------------------------
+-- patients
+-- Фамилии без пола, к сожалению
+DO $$
+DECLARE
+	my_name text;
+	my_last_name text;
+	my_patronymic text;
+	my_gender text; 
+	my_birth_date date;
+	my_phone_number text;
+	--my_citizenship text;
+	--my_city text;
+	my_address text;
+	my_blood_type text;
+	--my_allergies text;
+	--my_chronic_diseases text;
+	my_clinic_id integer;
+BEGIN
+	FOR i IN 1 .. 20
+	LOOP
+		SELECT sex INTO my_gender
+		FROM russian_names WHERE random() > 0.99991 LIMIT 1;
+		
+		IF my_gender LIKE 'Ж' THEN
+			SELECT name INTO my_name
+			FROM russian_names WHERE random() > 0.999 AND sex LIKE 'Ж' LIMIT 1;
+			
+			SELECT surname INTO my_last_name
+			FROM russian_surnames WHERE random() > 0.9999 LIMIT 1;
+			
+			SELECT patronymic INTO my_patronymic
+			FROM russian_patronymics WHERE random() > 0.8 AND sex LIKE 'Ж' LIMIT 1;
+		END IF;
+		
+		IF my_gender LIKE 'М' THEN
+			SELECT name INTO my_name
+			FROM russian_names WHERE random() > 0.999 AND sex LIKE 'М' LIMIT 1;
+			
+			SELECT surname INTO my_last_name
+			FROM russian_surnames WHERE random() > 0.9999 LIMIT 1;
+			
+			SELECT patronymic INTO my_patronymic
+			FROM russian_patronymics WHERE random() > 0.8 AND sex LIKE 'М' LIMIT 1;
+		END IF;
+		
+		SELECT dates INTO my_birth_date
+		FROM dates_table WHERE random() > 0.9 AND EXTRACT(YEAR FROM dates) <= '2000';
+		
+		SELECT CONCAT('+73822', CAST(FLOOR(random()*(1000000-100000)+100000) AS text)) INTO my_phone_number;
+		
+		SELECT CONCAT(adress, ', ', ROUND(random()*(111-1)+1)) INTO my_address
+		FROM help WHERE random() > 0.92 LIMIT 1;
+		
+		SELECT FLOOR(random()*4+1) INTO my_blood_type;
+		
+		SELECT id INTO my_clinic_id
+		FROM polyclinics WHERE random() > 0.5 LIMIT 1;
+		
+		INSERT INTO patients (name, last_name, patronymic, gender, birth_date, phone_number, citizenship, city, address, blood_type, allergies, chronic_diseases, clinic_id)
+		VALUES(my_name, my_last_name, my_patronymic, my_gender, my_birth_date, my_phone_number, 'Россия', 'Томск', my_address, my_blood_type, ' ', ' ', my_clinic_id);
+	END LOOP;
+END $$;
+
+SELECT * FROM patients;
+delete from patients;
