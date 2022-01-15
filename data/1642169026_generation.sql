@@ -6,7 +6,6 @@
 -- Больницы (что такое phones?)
 DO $$
 DECLARE
-	smth varchar(100);
 	my_name text;
 	my_adress text; 
 	my_phone text;
@@ -55,7 +54,6 @@ delete from dates_table;
 -- Иногда будет засовывать нули при генерации, просто прогнать надо будет если вдруг сгенерит
 DO $$
 DECLARE
-	smth varchar(100);
 	hosp_id integer;
 	my_name text;
 	my_adress text; 
@@ -163,10 +161,127 @@ BEGIN
 		SELECT CAST(random()*9+1 AS integer) INTO my_working_rate;
 		
 		INSERT INTO doctors_hospitals (doctor_id, hospital_id, agreement, post_id, "from", "to", salary, working_rate)
-		VALUES(doc_id, hosp_id, my_agreement, my_post_id, my_from, my_to, my_salary, my_working_rate);
+		VALUES(doc_id, hosp_id, ' ', my_post_id, my_from, my_to, my_salary, my_working_rate);
 	END LOOP;
 END $$;
 
 
 select * from doctors_hospitals;
 delete from doctors_hospitals;
+
+-------------------------------------------------------------------------------------------------------------
+-- doctors_clinics
+DO $$
+DECLARE
+	doc_id integer;
+	clin_id integer;
+	my_agreement text;
+	my_post_id integer;
+	my_from date; 
+	my_to date;
+	my_salary integer;
+	my_working_rate double precision;
+BEGIN
+	FOR i IN 1 .. 6
+	LOOP
+		SELECT id INTO doc_id
+		FROM doctors WHERE random() > 0.5 LIMIT 1;
+		
+		SELECT id INTO clin_id
+		FROM polyclinics WHERE random() > 0.5 LIMIT 1;
+		
+		SELECT id INTO my_post_id
+		FROM doctor_posts WHERE random() > 0.5 LIMIT 1;
+		
+		SELECT dates INTO my_from
+		FROM dates_table WHERE random() > 0.5 AND EXTRACT(YEAR FROM dates) <= '2021' LIMIT 1;
+		
+		SELECT dates INTO my_to
+		FROM dates_table WHERE random() > 0.5 AND EXTRACT(YEAR FROM dates) > '2021' LIMIT 1;
+		
+		SELECT random()*(100000-10000)+10000 INTO my_salary;
+		
+		SELECT CAST(random()*9+1 AS integer) INTO my_working_rate;
+		
+		INSERT INTO doctors_clinics (doctor_id, clinic_id, agreement, post_id, "from", "to", salary, working_rate)
+		VALUES(doc_id, clin_id, ' ', my_post_id, my_from, my_to, my_salary, my_working_rate);
+	END LOOP;
+END $$;
+
+
+select * from doctors_clinics;
+delete from doctors_clinics;
+
+---------------------------------------------------------------------------------------------------------------
+-- buildings
+DO $$
+DECLARE
+	hosp_id integer;
+	my_adress text; 
+	my_phone text;
+BEGIN
+	FOR i IN 1 .. 6
+	LOOP
+		SELECT id INTO hosp_id
+		FROM hospitals WHERE random() > 0.7 LIMIT 1;
+		
+		SELECT CONCAT(adress, ', ', ROUND(random()*(111-1)+1)) INTO my_adress
+		FROM help WHERE random() > 0.92 LIMIT 1;
+		
+		SELECT CONCAT('+73822', CAST(FLOOR(random()*(1000000-100000)+100000) AS text)) INTO my_phone;
+		
+		INSERT INTO buildings (hospital_id, address, phone)
+		VALUES(hosp_id, my_adress, my_phone);
+	END LOOP;
+END $$;
+
+select * from buildings;
+delete from buildings;
+
+---------------------------------------------------------------------------------------------------------------
+-- departments
+DO $$
+DECLARE
+	my_building_id integer;
+	my_spec_id integer; 
+	my_phone text;
+BEGIN
+	FOR i IN 1 .. 6
+	LOOP
+		SELECT id INTO my_building_id
+		FROM buildings WHERE random() > 0.7 LIMIT 1;
+		
+		SELECT id INTO my_spec_id
+		FROM dep_specializations WHERE random() > 0.7 LIMIT 1;
+		
+		SELECT CONCAT('+73822', CAST(FLOOR(random()*(1000000-100000)+100000) AS text)) INTO my_phone;
+		
+		INSERT INTO departments (building_id, spec_id, phone)
+		VALUES(my_building_id, my_spec_id, my_phone);
+	END LOOP;
+END $$;
+
+select * from departments;
+delete from departments;
+
+---------------------------------------------------------------------------------------------------------------
+-- wards
+DO $$
+DECLARE
+	my_department_id integer;
+	my_number_of_beds integer; 
+BEGIN
+	FOR i IN 1 .. 6
+	LOOP
+		SELECT id INTO my_department_id
+		FROM departments WHERE random() > 0.7 LIMIT 1;
+		
+		SELECT random()*19+1 INTO my_number_of_beds;
+		
+		INSERT INTO wards (department_id, number_of_beds)
+		VALUES(my_department_id, my_number_of_beds);
+	END LOOP;
+END $$;
+
+select * from wards;
+delete from wards;
