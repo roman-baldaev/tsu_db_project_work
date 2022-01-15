@@ -215,10 +215,76 @@ WHERE id = 1000;
 INSERT INTO doctors_hospitals(id, doctor_id, hospital_id, post_id, "from", salary, payment_ratio, vacation_days)
 VALUES (1001, 1001, 1000, 1000, CURRENT_DATE, 100000, 1.5, 35);
 
+DELETE FROM doctors_hospitals WHERE id >= 1000;
 DELETE FROM hospitals WHERE id >= 1000;
 DELETE FROM doctor_posts WHERE id >= 1000;
 DELETE FROM doctors WHERE id >= 1000;
-DELETE FROM doctors_hospitals WHERE id >= 1000;
+------------------------------------------------------------------------------------------------
+
+
+------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------
+/*
+    4.  " Степень доктора медицинских наук дает право на присво- ение звания профессора, а степень кандидата медицинских наук на присвоение звания доцента"
+    Проверяем при добавлении/обновлении значений в таблице `doctors`
+*/
+CREATE OR REPLACE FUNCTION F_check_correct_degree_for_title()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF new.title IS NULL THEN
+        IF (TG_OP = 'INSERT') THEN
+            -- просто ставим значение по умолчанию
+            new.title = 'none';
+        END IF;
+        RETURN new;
+    END IF;
+
+    IF (TG_OP = 'UPDATE') THEN
+        IF new.degree IS NULL THEN
+            new.degree = old.degree;
+        END IF;
+    END IF;
+    -- проверка на профессора
+    IF new.title = 'professor' THEN
+        IF new.degree != 'doctor' THEN
+            RAISE EXCEPTION '% cannot be %', new.degree, new.title;
+        END IF;
+    END IF;
+    -- доцента
+    IF new.title = 'docent' THEN
+        IF new.degree != 'doctor' AND new.degree != 'candidate' THEN
+            RAISE EXCEPTION '% cannot be %', new.degree, new.title;
+        END IF;
+    END IF;
+    RETURN new;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER TR_check_correct_degree_for_title
+BEFORE INSERT OR UPDATE ON doctors
+FOR EACH ROW
+EXECUTE PROCEDURE F_check_correct_degree_for_title();
+
+/*
+    Проверка триггера
+*/
+-- кандидат - доцент
+INSERT INTO doctors(id, name, last_name, patronymic, degree, title, spec_id)
+VALUES (1000, 'Это', 'Для', 'Тестирования', 'candidate', 'docent', 1);
+
+-- доктор доцент
+INSERT INTO doctors(id, name, last_name, patronymic, degree, title, spec_id)
+VALUES (1001, 'Это', 'Для', 'Тестирования', 'doctor', 'docent', 1);
+
+-- доктор профессор
+INSERT INTO doctors(id, name, last_name, patronymic, degree, title, spec_id)
+VALUES (1002, 'Это', 'Для', 'Тестирования', 'doctor', 'docent', 1);
+
+-- ОШИБКА - кандидат профессор
+INSERT INTO doctors(id, name, last_name, patronymic, degree, title, spec_id)
+VALUES (1003, 'Это', 'Для', 'Тестирования', 'candidate', 'professor', 1);
+
+DELETE FROM doctors WHERE id >= 1000;
 ------------------------------------------------------------------------------------------------
 
 
