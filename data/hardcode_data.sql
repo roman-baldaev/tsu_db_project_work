@@ -86,3 +86,44 @@ VALUES('Дерматология');
 
 INSERT INTO dep_specializations (name)
 VALUES('Психиатрия');
+
+-- drugs
+----------------------------------------------------------------------------------
+INSERT INTO drugs (name, description, code)
+VALUES('Ибупрофен', '', '');
+
+INSERT INTO drugs (name, description, code)
+VALUES('Новокаин', '', '');
+
+INSERT INTO drugs (name, description, code)
+VALUES('Парацетомол', '', '');
+
+INSERT INTO drugs (name, description, code)
+VALUES('Фенибут', '', '');
+
+INSERT INTO drugs (name, description, code)
+VALUES('Феназепам', '', '');
+
+INSERT INTO drugs (name, description, code)
+VALUES('Алпразолам', '', '');
+
+INSERT INTO drugs (name, description, code)
+VALUES('Мирамистин', '', '');
+
+INSERT INTO drugs (name, description, code)
+VALUES('Золофт', '', '');
+
+INSERT INTO drugs (name, description, code)
+VALUES('Финлепсин', '', '');
+
+INSERT INTO drugs (name, description, code)
+VALUES('Финлепсин ретард', '', '');
+
+INSERT INTO drugs (name, description, code)
+VALUES('Миртазапин', '', '');
+
+INSERT INTO drugs (name, description, code)
+VALUES('Кетарол', '', '');
+
+INSERT INTO drugs (name, description, code)
+VALUES('Нимесулид', '', '');
