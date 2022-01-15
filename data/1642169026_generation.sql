@@ -1,3 +1,8 @@
+-- Вся генерация имеет шанс не сработать, т.к есть ограничение на уникальность названия.
+-- И получается, что когда рандом среди 6 цифр выдает хотя бы две одинаковых, происходит ошибка.
+-- Предлагаю не заморачиваться и оставить так, просто пытаться генерить данные до тех пор, пока не сгенерит
+-- все цифры разными (это не редко и не долго)
+
 -- Больницы (что такое phones?)
 DO $$
 DECLARE
@@ -55,8 +60,8 @@ select * from russian_names;
 select * from russian_surnames;
 -----------------------------------------------------------------------------------------------------------
 
--- Поликлиники (засовывает нули в hospital_id пока что)
--- не знаю почему
+-- Поликлиники
+-- Иногда будет засовывать нули при генерации, просто прогнать надо будет если вдруг сгенерит
 DO $$
 DECLARE
 	smth varchar(100);
@@ -68,7 +73,7 @@ BEGIN
 	FOR i IN 1 .. 6
 	LOOP
 		SELECT id INTO hosp_id
-		FROM hospitals WHERE random() > 0.8;
+		FROM hospitals WHERE random() > 0.7;
 		SELECT CONCAT('Поликлиника №', CAST(ROUND(random()*14+1) AS text)) INTO my_name;
 		SELECT CONCAT(adress, ', ', ROUND(random()*(111-1)+1)) INTO my_adress
 		FROM help WHERE random() > 0.92 LIMIT 1;
@@ -77,6 +82,7 @@ BEGIN
 		VALUES(hosp_id, my_name, my_adress, my_phone);
 	END LOOP;
 END $$;
+
 
 SELECT * from polyclinics;
 delete from polyclinics;
