@@ -19,16 +19,16 @@ VALUES(2, 'Поликлиника №2', 'проспект Кирова, 104', '
 -- Врачи
 ---------------------------------------------------------------------------
 INSERT INTO doctors (name, last_name, patronymic, degree, title, spec_id, birth_date, works_since, alma_mater)
-VALUES('Алексей', 'Смирнов', 'Александрович', 'doctor', 'professor', 1, '1977-10-01', '2006-05-16', 'че');
+VALUES('Алексей', 'Смирнов', 'Александрович', 'doctor', 'professor', 1, '1977-10-01', '2006-05-16', ' ');
 
 INSERT INTO doctors (name, last_name, patronymic, degree, title, spec_id, birth_date, works_since, alma_mater)
-VALUES('Владимир', 'Пугачев', 'Владимирович', 'none', 'none', 2, '1989-04-06', '2018-11-11', 'че');
+VALUES('Владимир', 'Пугачев', 'Владимирович', 'none', 'none', 2, '1989-04-06', '2018-11-11', ' ');
 
 INSERT INTO doctors (name, last_name, patronymic, degree, title, spec_id, birth_date, works_since, alma_mater)
-VALUES('Максим', 'Томский', 'Евгеньевич', 'candidate', 'docent', 3, '1990-01-21', '2012-12-02', 'че');
+VALUES('Максим', 'Томский', 'Евгеньевич', 'candidate', 'docent', 3, '1990-01-21', '2012-12-02', ' ');
 
 INSERT INTO doctors (name, last_name, patronymic, degree, title, spec_id, birth_date, works_since, alma_mater)
-VALUES('Денис', 'Московский', 'Алексеевич', 'candidate', 'professor', 4, '1984-06-05', '2013-01-24', 'че');
+VALUES('Денис', 'Московский', 'Алексеевич', 'candidate', 'professor', 4, '1984-06-05', '2013-01-24', ' ');
 
 -- Специализации
 ----------------------------------------------------------------------------
@@ -66,3 +66,23 @@ VALUES('Заместитель заведующего отделением');
 
 INSERT INTO doctor_posts (name)
 VALUES('Главврач');
+
+-- dep_specializations
+----------------------------------------------------------------------------------
+INSERT INTO dep_specializations (name)
+VALUES('Хирургия');
+
+INSERT INTO dep_specializations (name)
+VALUES('Неврология');
+
+INSERT INTO dep_specializations (name)
+VALUES('Ревматология');
+
+INSERT INTO dep_specializations (name)
+VALUES('Венерология');
+
+INSERT INTO dep_specializations (name)
+VALUES('Дерматология');
+
+INSERT INTO dep_specializations (name)
+VALUES('Психиатрия');
