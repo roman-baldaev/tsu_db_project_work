@@ -1,3 +1,5 @@
 DROP TRIGGER TR_check_access_to_in_operation ON in_operations_doctors;
 DROP TRIGGER TR_check_access_to_out_operation ON out_operations_doctors;
 DROP TRIGGER TR_check_access_to_operation_stats ON operations_stats;
+DROP TRIGGER TR_check_non_default_contract_conditions_in_clinics ON doctors_clinics;
+DROP TRIGGER TR_check_non_default_contract_conditions_in_hospitals ON doctors_hospitals;
