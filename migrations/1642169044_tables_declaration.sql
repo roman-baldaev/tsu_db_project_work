@@ -10,6 +10,31 @@ CREATE TYPE "doctor_degrees" AS ENUM (
   'doctor'
 );
 
+------------------------------------------------------------------------------------
+-- Вспомогательные таблицы 
+
+CREATE TABLE help 
+(  adress text -- будет ещё
+ 
+);
+
+CREATE TABLE russian_names ( 
+	 id INT NOT NULL,
+	 name VARCHAR(100) NOT NULL,
+	 sex VARCHAR(1) NULL,
+	 peoplesCount INT NULL,
+	 whenpeoplescount TIMESTAMP NULL
+);
+
+CREATE TABLE russian_surnames (
+	 id INT NOT NULL,
+	 surname VARCHAR(100) NOT NULL,
+	 sex VARCHAR(1) NULL,
+	 peoplesCount INT NULL,
+	 whenpeoplescount TIMESTAMP NULL
+);
+
+----------------------------------------------------------------------------------------
 CREATE TABLE "hospitals" (
   "id" SERIAL PRIMARY KEY,
   "name" text UNIQUE NOT NULL,

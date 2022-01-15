@@ -1,9 +1,3 @@
-CREATE TABLE help -- Вспомогательная таблица
-(  adress text
-	
-);
-
-
 -- Больницы (что такое phones?)
 DO $$
 DECLARE
@@ -56,21 +50,6 @@ BEGIN
 END $$;
 
 ---------------------------------------------------------------------------------------------------------------
-CREATE TABLE russian_names (
-	 id INT NOT NULL,
-	 name VARCHAR(100) NOT NULL,
-	 sex VARCHAR(1) NULL,
-	 peoplesCount INT NULL,
-	 whenpeoplescount TIMESTAMP NULL
-);
-
-CREATE TABLE russian_surnames (
-	 id INT NOT NULL,
-	 surname VARCHAR(100) NOT NULL,
-	 sex VARCHAR(1) NULL,
-	 peoplesCount INT NULL,
-	 whenpeoplescount TIMESTAMP NULL
-);
 
 select * from russian_names;
 select * from russian_surnames;
